@@ -2175,5 +2175,61 @@
         "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.10.0-beta.4-24008443499/python-3.10.0-beta.4-linux-24.04-riscv64.tar.gz"
       }
     ]
+  },
+  {
+    "version": "3.10.0-beta.2",
+    "stable": false,
+    "release_url": "https://github.com/riseproject-dev/python-versions/releases/tag/3.10.0-beta.2-24008557051",
+    "files": [
+      {
+        "filename": "python-3.10.0-beta.2-linux-24.04-riscv64.tar.gz",
+        "arch": "riscv64",
+        "platform": "linux",
+        "platform_version": "24.04",
+        "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.10.0-beta.2-24008557051/python-3.10.0-beta.2-linux-24.04-riscv64.tar.gz"
+      }
+    ]
+  },
+  {
+    "version": "3.10.0-beta.1",
+    "stable": false,
+    "release_url": "https://github.com/riseproject-dev/python-versions/releases/tag/3.10.0-beta.1-24008557182",
+    "files": [
+      {
+        "filename": "python-3.10.0-beta.1-linux-24.04-riscv64.tar.gz",
+        "arch": "riscv64",
+        "platform": "linux",
+        "platform_version": "24.04",
+        "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.10.0-beta.1-24008557182/python-3.10.0-beta.1-linux-24.04-riscv64.tar.gz"
+      }
+    ]
+  },
+  {
+    "version": "3.10.0-alpha.7",
+    "stable": false,
+    "release_url": "https://github.com/riseproject-dev/python-versions/releases/tag/3.10.0-alpha.7-24008557288",
+    "files": [
+      {
+        "filename": "python-3.10.0-alpha.7-linux-24.04-riscv64.tar.gz",
+        "arch": "riscv64",
+        "platform": "linux",
+        "platform_version": "24.04",
+        "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.10.0-alpha.7-24008557288/python-3.10.0-alpha.7-linux-24.04-riscv64.tar.gz"
+      }
+    ]
+  },
+  {
+    "version": "3.10.0-alpha.6",
+    "stable": false,
+    "release_url": "https://github.com/riseproject-dev/python-versions/releases/tag/3.10.0-alpha.6-24008557591",
+    "files": [
+      {
+        "filename": "python-3.10.0-alpha.6-linux-24.04-riscv64.tar.gz",
+        "arch": "riscv64",
+        "platform": "linux",
+        "platform_version": "24.04",
+        "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.10.0-alpha.6-24008557591/python-3.10.0-alpha.6-linux-24.04-riscv64.tar.gz"
+      }
+    ]
   }
 ]
