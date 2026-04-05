@@ -882,6 +882,48 @@
     ]
   },
   {
+    "version": "3.13.0-alpha.6",
+    "stable": false,
+    "release_url": "https://github.com/riseproject-dev/python-versions/releases/tag/3.13.0-alpha.6-24007137999",
+    "files": [
+      {
+        "filename": "python-3.13.0-alpha.6-linux-24.04-riscv64-freethreaded.tar.gz",
+        "arch": "riscv64-freethreaded",
+        "platform": "linux",
+        "platform_version": "24.04",
+        "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.13.0-alpha.6-24007137999/python-3.13.0-alpha.6-linux-24.04-riscv64-freethreaded.tar.gz"
+      },
+      {
+        "filename": "python-3.13.0-alpha.6-linux-24.04-riscv64.tar.gz",
+        "arch": "riscv64",
+        "platform": "linux",
+        "platform_version": "24.04",
+        "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.13.0-alpha.6-24007137999/python-3.13.0-alpha.6-linux-24.04-riscv64.tar.gz"
+      }
+    ]
+  },
+  {
+    "version": "3.13.0-alpha.5",
+    "stable": false,
+    "release_url": "https://github.com/riseproject-dev/python-versions/releases/tag/3.13.0-alpha.5-24007138252",
+    "files": [
+      {
+        "filename": "python-3.13.0-alpha.5-linux-24.04-riscv64-freethreaded.tar.gz",
+        "arch": "riscv64-freethreaded",
+        "platform": "linux",
+        "platform_version": "24.04",
+        "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.13.0-alpha.5-24007138252/python-3.13.0-alpha.5-linux-24.04-riscv64-freethreaded.tar.gz"
+      },
+      {
+        "filename": "python-3.13.0-alpha.5-linux-24.04-riscv64.tar.gz",
+        "arch": "riscv64",
+        "platform": "linux",
+        "platform_version": "24.04",
+        "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.13.0-alpha.5-24007138252/python-3.13.0-alpha.5-linux-24.04-riscv64.tar.gz"
+      }
+    ]
+  },
+  {
     "version": "3.13.0-alpha.4",
     "stable": false,
     "release_url": "https://github.com/riseproject-dev/python-versions/releases/tag/3.13.0-alpha.4-24007138321",
