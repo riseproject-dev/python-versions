@@ -5,11 +5,16 @@ on:
     - cron: '0 6 * * *'
   workflow_dispatch:
     inputs:
-      max_dispatches:
-        description: "Maximum number of build dispatches (0 = dry run)"
+      max_parallelism:
+        description: "Maximum number of build-python.yml runs in flight at once"
         required: false
-        default: "20"
+        default: "10"
         type: string
+      dry_run:
+        description: "List candidates without dispatching any builds"
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -25,7 +30,8 @@ jobs:
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_REPOSITORY: ${{ github.repository }}
-      MAX_DISPATCHES: ${{ inputs.max_dispatches || '20' }}
+      MAX_PARALLELISM: ${{ inputs.max_parallelism || '10' }}
+      DRY_RUN: ${{ inputs.dry_run && 'true' || 'false' }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
