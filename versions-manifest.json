@@ -1713,5 +1713,19 @@
         "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.11.0-beta.3-24008035540/python-3.11.0-beta.3-linux-24.04-riscv64.tar.gz"
       }
     ]
+  },
+  {
+    "version": "3.11.0-alpha.3",
+    "stable": false,
+    "release_url": "https://github.com/riseproject-dev/python-versions/releases/tag/3.11.0-alpha.3-24008063861",
+    "files": [
+      {
+        "filename": "python-3.11.0-alpha.3-linux-24.04-riscv64.tar.gz",
+        "arch": "riscv64",
+        "platform": "linux",
+        "platform_version": "24.04",
+        "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.11.0-alpha.3-24008063861/python-3.11.0-alpha.3-linux-24.04-riscv64.tar.gz"
+      }
+    ]
   }
 ]
