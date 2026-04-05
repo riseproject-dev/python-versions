@@ -15,6 +15,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 defaults:
   run:
@@ -164,3 +165,6 @@ jobs:
             --title "$NORMALISED" \
             --notes "Python $NORMALISED" \
             ./output/*.tar.gz
+
+      - name: Trigger manifest refresh
+        run: gh workflow run update-manifest.yml --repo "$GITHUB_REPOSITORY" --ref main
