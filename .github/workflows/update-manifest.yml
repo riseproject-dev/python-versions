@@ -36,6 +36,20 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Setup git user
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+      - name: Switch to PR branch
+        run: |
+          if git ls-remote --exit-code --heads origin "$PR_BRANCH" >/dev/null; then
+            git fetch origin "$PR_BRANCH"
+            git switch -c "$PR_BRANCH" "origin/$PR_BRANCH"
+          else
+            git switch -C "$PR_BRANCH"
+          fi
+
       - name: Regenerate manifest
         run: python .github/scripts/update-manifest.py
 
@@ -46,15 +60,12 @@ jobs:
             exit 0
           fi
 
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git switch -C "$PR_BRANCH"
           git add versions-manifest.json
           git commit -m "Update versions-manifest.json"
-          git push --force origin "$PR_BRANCH"
+          git push origin "$PR_BRANCH"
 
           if gh pr list --repo "$GITHUB_REPOSITORY" --head "$PR_BRANCH" --state open --json number -q '.[].number' | grep -q .; then
-            echo "Existing PR updated via force-push"
+            echo "Existing PR updated"
           else
             gh pr create --repo "$GITHUB_REPOSITORY" \
               --base main \
