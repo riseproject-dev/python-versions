@@ -1,22 +1,43 @@
 [
   {
+    "version": "3.15.0-alpha.2",
+    "stable": false,
+    "release_url": "https://github.com/riseproject-dev/python-versions/releases/tag/3.15.0-alpha.2-24005744590",
+    "files": [
+      {
+        "filename": "python-3.15.0-alpha.2-linux-24.04-riscv64.tar.gz",
+        "arch": "riscv64",
+        "platform": "linux",
+        "platform_version": "24.04",
+        "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.15.0-alpha.2-24005744590/python-3.15.0-alpha.2-linux-24.04-riscv64.tar.gz"
+      },
+      {
+        "filename": "python-3.15.0-alpha.2-linux-24.04-riscv64-freethreaded.tar.gz",
+        "arch": "riscv64-freethreaded",
+        "platform": "linux",
+        "platform_version": "24.04",
+        "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.15.0-alpha.2-24005744590/python-3.15.0-alpha.2-linux-24.04-riscv64-freethreaded.tar.gz"
+      }
+    ]
+  },
+  {
     "version": "3.14.0-alpha.6",
     "stable": false,
     "release_url": "https://github.com/riseproject-dev/python-versions/releases/tag/3.14.0-alpha.6-24005744561",
     "files": [
-      {
-        "filename": "python-3.14.0-alpha.6-linux-24.04-riscv64-freethreaded.tar.gz",
-        "arch": "riscv64-freethreaded",
-        "platform": "linux",
-        "platform_version": "24.04",
-        "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.14.0-alpha.6-24005744561/python-3.14.0-alpha.6-linux-24.04-riscv64-freethreaded.tar.gz"
-      },
       {
         "filename": "python-3.14.0-alpha.6-linux-24.04-riscv64.tar.gz",
         "arch": "riscv64",
         "platform": "linux",
         "platform_version": "24.04",
         "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.14.0-alpha.6-24005744561/python-3.14.0-alpha.6-linux-24.04-riscv64.tar.gz"
+      },
+      {
+        "filename": "python-3.14.0-alpha.6-linux-24.04-riscv64-freethreaded.tar.gz",
+        "arch": "riscv64-freethreaded",
+        "platform": "linux",
+        "platform_version": "24.04",
+        "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.14.0-alpha.6-24005744561/python-3.14.0-alpha.6-linux-24.04-riscv64-freethreaded.tar.gz"
       }
     ]
   },
