@@ -1,0 +1,173 @@
+name: Build Python
+
+on:
+  workflow_dispatch:
+    inputs:
+      cpython_tag:
+        description: "CPython git tag to build (e.g. v3.12.13, v3.15.0a7)"
+        required: true
+        type: string
+      freethreaded:
+        description: "Also build a --disable-gil variant (3.13+)"
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    shell: bash --noprofile --norc -exo pipefail {0}
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04-riscv
+    env:
+      CPYTHON_TAG: ${{ inputs.cpython_tag }}
+      FREETHREADED: ${{ inputs.freethreaded }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout this repo
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y --no-install-recommends \
+            build-essential \
+            ca-certificates \
+            g++-14 \
+            gcc-14 \
+            git \
+            libbz2-dev \
+            libexpat1-dev \
+            libffi-dev \
+            libgdbm-dev \
+            liblzma-dev \
+            libncursesw5-dev \
+            libreadline-dev \
+            libsqlite3-dev \
+            libssl-dev \
+            make \
+            patchelf \
+            pkg-config \
+            tk-dev \
+            uuid-dev \
+            wget \
+            xz-utils \
+            zlib1g-dev
+
+          # Make sure Python is built with gcc 14
+          echo "CC=gcc-14" >> $GITHUB_ENV
+          echo "CXX=g++-14" >> $GITHUB_ENV
+
+      - name: Compute normalised version
+        id: vars
+        run: |
+          set -euo pipefail
+          tag="$CPYTHON_TAG"
+          # Strip leading v, expand a/b/rc suffixes
+          normalised="${tag#v}"
+          normalised="$(echo "$normalised" | sed -E 's/a([0-9]+)$/-alpha.\1/; s/b([0-9]+)$/-beta.\1/; s/rc([0-9]+)$/-rc.\1/')"
+          # X.Y
+          minor_num="$(echo "$normalised" | cut -d. -f2)"
+          minor="3.${minor_num}"
+          echo "normalised=${normalised}" >> "$GITHUB_OUTPUT"
+          echo "minor=${minor}" >> "$GITHUB_OUTPUT"
+          echo "minor_num=${minor_num}" >> "$GITHUB_OUTPUT"
+          echo "archive_base=python-${normalised}-linux-24.04-riscv64" >> "$GITHUB_OUTPUT"
+          echo "Normalised version: ${normalised}"
+          echo "Python X.Y: ${minor}"
+          if [ "${FREETHREADED}" = "true" ] && [ "${minor_num}" -lt 13 ]; then
+            echo "ERROR: freethreaded build requires CPython 3.13+" >&2
+            exit 1
+          fi
+
+      - name: Checkout CPython
+        run: git clone --depth 1 --branch "$CPYTHON_TAG" https://github.com/python/cpython.git src
+
+      - name: Build standard CPython
+        env:
+          MINOR: ${{ steps.vars.outputs.minor }}
+          ARCHIVE_BASE: ${{ steps.vars.outputs.archive_base }}
+          NORMALISED: ${{ steps.vars.outputs.normalised }}
+        run: |
+          set -euo pipefail
+          mkdir -p output
+          pushd src
+          ./configure --with-ensurepip=install --enable-shared
+          make -j"$(nproc)" 2>&1 | tee ../build_output.txt
+          make install DESTDIR="$PWD/../staging-std"
+          popd
+
+          mkdir -p "$ARCHIVE_BASE"
+          cp -a staging-std/usr/local/bin "$ARCHIVE_BASE/"
+          cp -a staging-std/usr/local/include "$ARCHIVE_BASE/"
+          cp -a staging-std/usr/local/lib "$ARCHIVE_BASE/"
+          cp -a staging-std/usr/local/share "$ARCHIVE_BASE/"
+
+          patchelf --set-rpath '$ORIGIN/../lib' "$ARCHIVE_BASE/bin/python${MINOR}"
+
+          sed -e "s|{{__VERSION_FULL__}}|${NORMALISED}|g" \
+              -e "s|{{__ARCH__}}|riscv64|g" \
+              installers/nix-setup-template.sh > "$ARCHIVE_BASE/setup.sh"
+
+          mv build_output.txt "$ARCHIVE_BASE/build_output.txt"
+
+          (cd "$ARCHIVE_BASE" && find . \( -type f -o -type l \) | sed 's|^\.|/|') > "$ARCHIVE_BASE/tools_structure.txt"
+
+          tar -czf "output/${ARCHIVE_BASE}.tar.gz" "$ARCHIVE_BASE"
+          rm -rf "$ARCHIVE_BASE" staging-std
+
+      - name: Build free-threaded CPython
+        if: ${{ inputs.freethreaded == true }}
+        env:
+          MINOR: ${{ steps.vars.outputs.minor }}
+          ARCHIVE_BASE: ${{ steps.vars.outputs.archive_base }}
+          NORMALISED: ${{ steps.vars.outputs.normalised }}
+        run: |
+          set -euo pipefail
+          ft_base="${ARCHIVE_BASE}-freethreaded"
+          pushd src
+          git clean -fdx
+          ./configure --with-ensurepip=install --enable-shared --disable-gil
+          make -j"$(nproc)" 2>&1 | tee ../build_output.txt
+          make install DESTDIR="$PWD/../staging-ft"
+          popd
+
+          mkdir -p "$ft_base"
+          cp -a staging-ft/usr/local/bin "$ft_base/"
+          cp -a staging-ft/usr/local/include "$ft_base/"
+          cp -a staging-ft/usr/local/lib "$ft_base/"
+          cp -a staging-ft/usr/local/share "$ft_base/"
+
+          patchelf --set-rpath '$ORIGIN/../lib' "$ft_base/bin/python${MINOR}"
+
+          sed -e "s|{{__VERSION_FULL__}}|${NORMALISED}|g" \
+              -e "s|{{__ARCH__}}|riscv64|g" \
+              installers/nix-setup-template.sh > "$ft_base/setup.sh"
+
+          mv build_output.txt "$ft_base/build_output.txt"
+
+          (cd "$ft_base" && find . \( -type f -o -type l \) | sed 's|^\.|/|') > "$ft_base/tools_structure.txt"
+
+          tar -czf "output/${ft_base}.tar.gz" "$ft_base"
+          rm -rf "$ft_base" staging-ft
+
+      - name: Print tarball hashes
+        run: sha256sum output/*.tar.gz
+
+      - name: Publish release
+        env:
+          NORMALISED: ${{ steps.vars.outputs.normalised }}
+        run: |
+          set -euo pipefail
+          if gh release view "$NORMALISED" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$NORMALISED" --repo "$GITHUB_REPOSITORY" --clobber ./output/*.tar.gz
+          else
+            gh release create "$NORMALISED" --repo "$GITHUB_REPOSITORY" \
+              --title "$NORMALISED" \
+              --notes "Python $NORMALISED" \
+              ./output/*.tar.gz
+          fi
