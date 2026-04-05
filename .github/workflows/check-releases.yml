@@ -15,71 +15,25 @@ permissions:
   contents: read
   actions: write
 
+defaults:
+  run:
+    shell: bash --noprofile --norc -euxo pipefail {0}
+
 jobs:
   discover:
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_REPOSITORY: ${{ github.repository }}
       MAX_DISPATCHES: ${{ inputs.max_dispatches || '20' }}
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: '3.12'
+
       - name: Enumerate and dispatch
-        run: |
-          set -euo pipefail
-          max="${MAX_DISPATCHES}"
-          dispatched=0
-          dispatched_list=""
-
-          # Fetch all v* tags from python/cpython, ordered by version, descending (newer first)
-          mapfile -t refs < <(gh api --paginate repos/python/cpython/git/matching-refs/tags/v -q '.[].ref' | sort -V --reverse)
-
-          # Fetch all existing release tags in this repo once
-          mapfile -t existing_tags < <(gh api --paginate "repos/$GITHUB_REPOSITORY/releases" -q '.[].tag_name')
-
-          for ref in "${refs[@]}"; do
-            tag="${ref#refs/tags/}"
-            # Filter: 3.10+, with optional a/b/rc suffix, no dev/post
-            if [[ ! "$tag" =~ ^v(3\.(1[0-9]|[2-9][0-9]))\.([0-9]+)(a[0-9]+|b[0-9]+|rc[0-9]+)?$ ]]; then
-              continue
-            fi
-            minor_int="${BASH_REMATCH[2]}"
-
-            # Normalise
-            normalised="${tag#v}"
-            normalised="$(echo "$normalised" | sed -E 's/a([0-9]+)$/-alpha.\1/; s/b([0-9]+)$/-beta.\1/; s/rc([0-9]+)$/-rc.\1/')"
-
-            echo "Tag $tag -> release $normalised"
-
-            normalised_re="${normalised//./\\.}"
-            already=0
-            for t in "${existing_tags[@]}"; do
-              if [[ "$t" =~ ^${normalised_re}-[0-9]+$ ]]; then
-                already=1
-                break
-              fi
-            done
-            if [ "$already" = 1 ]; then
-              echo "  already released, skipping"
-              continue
-            fi
-
-            if [ "$dispatched" -ge "$max" ]; then
-              echo "  would dispatch (cap reached)"
-              continue
-            fi
-
-            ft="false"
-            if [ "$minor_int" -ge 13 ]; then
-              ft="true"
-            fi
-
-            echo "  dispatching build-python.yml (freethreaded=$ft)"
-            gh workflow run build-python.yml --repo "$GITHUB_REPOSITORY" \
-              -f cpython_tag="$tag" \
-              -f freethreaded="$ft"
-            dispatched=$((dispatched + 1))
-            dispatched_list="${dispatched_list}${tag} -> ${normalised} (ft=${ft})"$'\n'
-          done
-
-          echo ""
-          echo "=== Dispatched $dispatched build(s) ==="
-          printf '%s' "$dispatched_list"
+        run: python .github/scripts/check-releases.py
