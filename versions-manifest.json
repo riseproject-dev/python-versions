@@ -441,6 +441,27 @@
     ]
   },
   {
+    "version": "3.14.0-alpha.4",
+    "stable": false,
+    "release_url": "https://github.com/riseproject-dev/python-versions/releases/tag/3.14.0-alpha.4-24006430515",
+    "files": [
+      {
+        "filename": "python-3.14.0-alpha.4-linux-24.04-riscv64.tar.gz",
+        "arch": "riscv64",
+        "platform": "linux",
+        "platform_version": "24.04",
+        "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.14.0-alpha.4-24006430515/python-3.14.0-alpha.4-linux-24.04-riscv64.tar.gz"
+      },
+      {
+        "filename": "python-3.14.0-alpha.4-linux-24.04-riscv64-freethreaded.tar.gz",
+        "arch": "riscv64-freethreaded",
+        "platform": "linux",
+        "platform_version": "24.04",
+        "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.14.0-alpha.4-24006430515/python-3.14.0-alpha.4-linux-24.04-riscv64-freethreaded.tar.gz"
+      }
+    ]
+  },
+  {
     "version": "3.14.0-alpha.3",
     "stable": false,
     "release_url": "https://github.com/riseproject-dev/python-versions/releases/tag/3.14.0-alpha.3-24006439497",
