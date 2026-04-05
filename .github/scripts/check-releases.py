@@ -38,6 +38,13 @@ PRE_SUBS = (
 )
 BUILD_WORKFLOW = "build-python.yml"
 
+# CPython tags we know don't build on riscv64. Skipped silently after the
+# release-existence check fails.
+DENYLIST: frozenset[str] = frozenset({
+    "v3.13.0a2",
+    "v3.13.0b3",
+})
+
 # Poll cadence (seconds)
 RUN_DISCOVERY_POLL = 5
 RUN_DISCOVERY_ATTEMPTS = 60  # up to 5 minutes
@@ -231,6 +238,10 @@ def main() -> int:
         version_re = re.compile(rf"^{re.escape(normalised)}-[0-9]+$")
         if any(version_re.match(t) for t in existing_tags):
             log("  already released, skipping")
+            continue
+
+        if tag in DENYLIST:
+            log("  in denylist, skipping")
             continue
 
         ft = minor >= 13
