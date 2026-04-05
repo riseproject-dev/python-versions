@@ -1,0 +1,60 @@
+name: Update versions-manifest.json
+
+on:
+  release:
+    types: [published, deleted]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+defaults:
+  run:
+    shell: bash --noprofile --norc -euxo pipefail {0}
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_REPOSITORY: ${{ github.repository }}
+      PR_BRANCH: auto/update-manifest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: '3.12'
+
+      - name: Regenerate manifest
+        run: python .github/scripts/update-manifest.py
+
+      - name: Commit and push (if changed)
+        run: |
+          if git diff --quiet -- versions-manifest.json; then
+            echo "No manifest changes"
+            exit 0
+          fi
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -C "$PR_BRANCH"
+          git add versions-manifest.json
+          git commit -m "Update versions-manifest.json"
+          git push --force origin "$PR_BRANCH"
+
+          if gh pr list --repo "$GITHUB_REPOSITORY" --head "$PR_BRANCH" --state open --json number -q '.[].number' | grep -q .; then
+            echo "Existing PR updated via force-push"
+          else
+            gh pr create --repo "$GITHUB_REPOSITORY" \
+              --base main \
+              --head "$PR_BRANCH" \
+              --title "Update versions-manifest.json" \
+              --body "Automated refresh of \`versions-manifest.json\` from the current list of releases."
+          fi

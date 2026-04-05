@@ -15,11 +15,15 @@ additional assets on the same release for CPython 3.13+.
 
 ## Release / asset naming
 
-| CPython tag  | Release tag      | Asset                                                              |
-| ------------ | ---------------- | ------------------------------------------------------------------ |
-| `v3.12.13`   | `3.12.13`        | `python-3.12.13-linux-24.04-riscv64.tar.gz`                        |
-| `v3.13.3`    | `3.13.3`         | `python-3.13.3-linux-24.04-riscv64.tar.gz` (+ `-freethreaded`)     |
-| `v3.15.0a7`  | `3.15.0-alpha.7` | `python-3.15.0-alpha.7-linux-24.04-riscv64.tar.gz` (+ `-freethreaded`) |
+Release **tags** include the GitHub Actions `run_id` of the build so rebuilds
+don't clobber older artefacts. Release **titles** and **notes** stay at the
+plain normalised version.
+
+| CPython tag  | Release title    | Release tag                      | Asset                                                                 |
+| ------------ | ---------------- | -------------------------------- | --------------------------------------------------------------------- |
+| `v3.12.13`   | `3.12.13`        | `3.12.13-<run_id>`               | `python-3.12.13-linux-24.04-riscv64.tar.gz`                           |
+| `v3.13.3`    | `3.13.3`         | `3.13.3-<run_id>`                | `python-3.13.3-linux-24.04-riscv64.tar.gz` (+ `-freethreaded`)        |
+| `v3.15.0a7`  | `3.15.0-alpha.7` | `3.15.0-alpha.7-<run_id>`        | `python-3.15.0-alpha.7-linux-24.04-riscv64.tar.gz` (+ `-freethreaded`) |
 
 ## Using a release
 
@@ -34,6 +38,18 @@ Or, to install into the GitHub Actions toolcache layout (`setup-python` compatib
 cd python-3.12.13-linux-24.04-riscv64
 ./setup.sh
 ```
+
+## Versions manifest
+
+`versions-manifest.json` at the repo root lists every published release in the
+same schema as
+[`actions/python-versions`](https://github.com/actions/python-versions/blob/main/versions-manifest.json),
+mapping each `version` to its `release_url` and per-file `download_url`s.
+
+The `Update versions-manifest.json` workflow regenerates it from the
+authoritative release list whenever a release is published or deleted (and on
+manual dispatch). Changes are force-pushed to the `auto/update-manifest` branch
+as a single rolling PR against `main`.
 
 ## Manual dispatch
 

@@ -18,7 +18,7 @@ permissions:
 
 defaults:
   run:
-    shell: bash --noprofile --norc -exo pipefail {0}
+    shell: bash --noprofile --norc -euxo pipefail {0}
 
 jobs:
   build:
@@ -65,7 +65,6 @@ jobs:
       - name: Compute normalised version
         id: vars
         run: |
-          set -euo pipefail
           tag="$CPYTHON_TAG"
           # Strip leading v, expand a/b/rc suffixes
           normalised="${tag#v}"
@@ -93,7 +92,6 @@ jobs:
           ARCHIVE_BASE: ${{ steps.vars.outputs.archive_base }}
           NORMALISED: ${{ steps.vars.outputs.normalised }}
         run: |
-          set -euo pipefail
           mkdir -p output
           pushd src
           ./configure --with-ensurepip=install --enable-shared
@@ -127,7 +125,6 @@ jobs:
           ARCHIVE_BASE: ${{ steps.vars.outputs.archive_base }}
           NORMALISED: ${{ steps.vars.outputs.normalised }}
         run: |
-          set -euo pipefail
           ft_base="${ARCHIVE_BASE}-freethreaded"
           pushd src
           git clean -fdx
@@ -162,12 +159,8 @@ jobs:
         env:
           NORMALISED: ${{ steps.vars.outputs.normalised }}
         run: |
-          set -euo pipefail
-          if gh release view "$NORMALISED" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            gh release upload "$NORMALISED" --repo "$GITHUB_REPOSITORY" --clobber ./output/*.tar.gz
-          else
-            gh release create "$NORMALISED" --repo "$GITHUB_REPOSITORY" \
-              --title "$NORMALISED" \
-              --notes "Python $NORMALISED" \
-              ./output/*.tar.gz
-          fi
+          TAG="${NORMALISED}-${GITHUB_RUN_ID}"
+          gh release create "$TAG" --repo "$GITHUB_REPOSITORY" \
+            --title "$NORMALISED" \
+            --notes "Python $NORMALISED" \
+            ./output/*.tar.gz

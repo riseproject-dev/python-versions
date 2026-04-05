@@ -32,6 +32,9 @@ jobs:
           # Fetch all v* tags from python/cpython, ordered by version, descending (newer first)
           mapfile -t refs < <(gh api --paginate repos/python/cpython/git/matching-refs/tags/v -q '.[].ref' | sort -V --reverse)
 
+          # Fetch all existing release tags in this repo once
+          mapfile -t existing_tags < <(gh api --paginate "repos/$GITHUB_REPOSITORY/releases" -q '.[].tag_name')
+
           for ref in "${refs[@]}"; do
             tag="${ref#refs/tags/}"
             # Filter: 3.10+, with optional a/b/rc suffix, no dev/post
@@ -46,7 +49,15 @@ jobs:
 
             echo "Tag $tag -> release $normalised"
 
-            if gh release view "$normalised" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            normalised_re="${normalised//./\\.}"
+            already=0
+            for t in "${existing_tags[@]}"; do
+              if [[ "$t" =~ ^${normalised_re}-[0-9]+$ ]]; then
+                already=1
+                break
+              fi
+            done
+            if [ "$already" = 1 ]; then
               echo "  already released, skipping"
               continue
             fi
