@@ -113,7 +113,7 @@ jobs:
 
           mv build_output.txt "$ARCHIVE_BASE/build_output.txt"
 
-          (cd "$ARCHIVE_BASE" && find . \( -type f -o -type l \) | sed 's|^\.|/|') > "$ARCHIVE_BASE/tools_structure.txt"
+          (cd "$ARCHIVE_BASE" && find . \( -type f -o -type l \) | sed 's|^\./|/|') > "$ARCHIVE_BASE/tools_structure.txt"
 
           tar -czf "output/${ARCHIVE_BASE}.tar.gz" "$ARCHIVE_BASE"
           rm -rf "$ARCHIVE_BASE" staging-std
@@ -147,7 +147,7 @@ jobs:
 
           mv build_output.txt "$ft_base/build_output.txt"
 
-          (cd "$ft_base" && find . \( -type f -o -type l \) | sed 's|^\.|/|') > "$ft_base/tools_structure.txt"
+          (cd "$ft_base" && find . \( -type f -o -type l \) | sed 's|^\./|/|') > "$ft_base/tools_structure.txt"
 
           tar -czf "output/${ft_base}.tar.gz" "$ft_base"
           rm -rf "$ft_base" staging-ft
