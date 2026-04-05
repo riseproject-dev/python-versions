@@ -112,6 +112,8 @@ jobs:
               -e "s|{{__ARCH__}}|riscv64|g" \
               installers/nix-setup-template.sh > "$ARCHIVE_BASE/setup.sh"
 
+          chmod +x "$ARCHIVE_BASE/setup.sh"
+
           mv build_output.txt "$ARCHIVE_BASE/build_output.txt"
 
           (cd "$ARCHIVE_BASE" && find . \( -type f -o -type l \) | sed 's|^\./|/|') > "$ARCHIVE_BASE/tools_structure.txt"
@@ -123,10 +125,9 @@ jobs:
         if: ${{ inputs.freethreaded == true }}
         env:
           MINOR: ${{ steps.vars.outputs.minor }}
-          ARCHIVE_BASE: ${{ steps.vars.outputs.archive_base }}
+          ARCHIVE_BASE: ${{ format('{0}-freethreaded', steps.vars.outputs.archive_base) }}
           NORMALISED: ${{ steps.vars.outputs.normalised }}
         run: |
-          ft_base="${ARCHIVE_BASE}-freethreaded"
           pushd src
           git clean -fdx
           ./configure --with-ensurepip=install --enable-shared --disable-gil
@@ -134,24 +135,26 @@ jobs:
           make install DESTDIR="$PWD/../staging-ft"
           popd
 
-          mkdir -p "$ft_base"
-          cp -a staging-ft/usr/local/bin "$ft_base/"
-          cp -a staging-ft/usr/local/include "$ft_base/"
-          cp -a staging-ft/usr/local/lib "$ft_base/"
-          cp -a staging-ft/usr/local/share "$ft_base/"
+          mkdir -p "$ARCHIVE_BASE"
+          cp -a staging-ft/usr/local/bin "$ARCHIVE_BASE/"
+          cp -a staging-ft/usr/local/include "$ARCHIVE_BASE/"
+          cp -a staging-ft/usr/local/lib "$ARCHIVE_BASE/"
+          cp -a staging-ft/usr/local/share "$ARCHIVE_BASE/"
 
-          patchelf --set-rpath '$ORIGIN/../lib' "$ft_base/bin/python${MINOR}"
+          patchelf --set-rpath '$ORIGIN/../lib' "$ARCHIVE_BASE/bin/python${MINOR}"
 
           sed -e "s|{{__VERSION_FULL__}}|${NORMALISED}|g" \
               -e "s|{{__ARCH__}}|riscv64|g" \
-              installers/nix-setup-template.sh > "$ft_base/setup.sh"
+              installers/nix-setup-template.sh > "$ARCHIVE_BASE/setup.sh"
 
-          mv build_output.txt "$ft_base/build_output.txt"
+          chmod +x "$ARCHIVE_BASE/setup.sh"
 
-          (cd "$ft_base" && find . \( -type f -o -type l \) | sed 's|^\./|/|') > "$ft_base/tools_structure.txt"
+          mv build_output.txt "$ARCHIVE_BASE/build_output.txt"
 
-          tar -czf "output/${ft_base}.tar.gz" "$ft_base"
-          rm -rf "$ft_base" staging-ft
+          (cd "$ARCHIVE_BASE" && find . \( -type f -o -type l \) | sed 's|^\./|/|') > "$ARCHIVE_BASE/tools_structure.txt"
+
+          tar -czf "output/${ARCHIVE_BASE}.tar.gz" "$ARCHIVE_BASE"
+          rm -rf "$ARCHIVE_BASE" staging-ft
 
       - name: Print tarball hashes
         run: sha256sum output/*.tar.gz
