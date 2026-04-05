@@ -2,7 +2,7 @@ name: Update versions-manifest.json
 
 on:
   release:
-    types: [published, deleted]
+    types: [released, deleted]
   workflow_dispatch:
 
 permissions:
