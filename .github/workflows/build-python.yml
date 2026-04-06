@@ -118,7 +118,7 @@ jobs:
 
           (cd "$ARCHIVE_BASE" && find . \( -type f -o -type l \) | sed 's|^\./|/|') > "$ARCHIVE_BASE/tools_structure.txt"
 
-          tar -czf "output/${ARCHIVE_BASE}.tar.gz" "$ARCHIVE_BASE"
+          tar -czf "output/${ARCHIVE_BASE}.tar.gz" -C "$ARCHIVE_BASE" .
           rm -rf "$ARCHIVE_BASE" staging-std
 
       - name: Build free-threaded CPython
@@ -153,7 +153,7 @@ jobs:
 
           (cd "$ARCHIVE_BASE" && find . \( -type f -o -type l \) | sed 's|^\./|/|') > "$ARCHIVE_BASE/tools_structure.txt"
 
-          tar -czf "output/${ARCHIVE_BASE}.tar.gz" "$ARCHIVE_BASE"
+          tar -czf "output/${ARCHIVE_BASE}.tar.gz" -C "$ARCHIVE_BASE" .
           rm -rf "$ARCHIVE_BASE" staging-ft
 
       - name: Print tarball hashes
