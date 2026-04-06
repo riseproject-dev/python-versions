@@ -144,7 +144,7 @@ jobs:
           patchelf --set-rpath '$ORIGIN/../lib' "$ARCHIVE_BASE/bin/python${MINOR}"
 
           sed -e "s|{{__VERSION_FULL__}}|${NORMALISED}|g" \
-              -e "s|{{__ARCH__}}|riscv64|g" \
+              -e "s|{{__ARCH__}}|riscv64-freethreaded|g" \
               installers/nix-setup-template.sh > "$ARCHIVE_BASE/setup.sh"
 
           chmod +x "$ARCHIVE_BASE/setup.sh"
