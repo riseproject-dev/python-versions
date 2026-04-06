@@ -1113,6 +1113,20 @@
     ]
   },
   {
+    "version": "3.12.7",
+    "stable": true,
+    "release_url": "https://github.com/riseproject-dev/python-versions/releases/tag/3.12.7-24015710369",
+    "files": [
+      {
+        "filename": "python-3.12.7-linux-24.04-riscv64.tar.gz",
+        "arch": "riscv64",
+        "platform": "linux",
+        "platform_version": "24.04",
+        "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.12.7-24015710369/python-3.12.7-linux-24.04-riscv64.tar.gz"
+      }
+    ]
+  },
+  {
     "version": "3.11.13",
     "stable": true,
     "release_url": "https://github.com/riseproject-dev/python-versions/releases/tag/3.11.13-24013578233",
