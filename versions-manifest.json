@@ -42,6 +42,48 @@
     ]
   },
   {
+    "version": "3.14.0",
+    "stable": true,
+    "release_url": "https://github.com/riseproject-dev/python-versions/releases/tag/3.14.0-24014027994",
+    "files": [
+      {
+        "filename": "python-3.14.0-linux-24.04-riscv64-freethreaded.tar.gz",
+        "arch": "riscv64-freethreaded",
+        "platform": "linux",
+        "platform_version": "24.04",
+        "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.14.0-24014027994/python-3.14.0-linux-24.04-riscv64-freethreaded.tar.gz"
+      },
+      {
+        "filename": "python-3.14.0-linux-24.04-riscv64.tar.gz",
+        "arch": "riscv64",
+        "platform": "linux",
+        "platform_version": "24.04",
+        "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.14.0-24014027994/python-3.14.0-linux-24.04-riscv64.tar.gz"
+      }
+    ]
+  },
+  {
+    "version": "3.14.0-beta.2",
+    "stable": false,
+    "release_url": "https://github.com/riseproject-dev/python-versions/releases/tag/3.14.0-beta.2-24014027999",
+    "files": [
+      {
+        "filename": "python-3.14.0-beta.2-linux-24.04-riscv64-freethreaded.tar.gz",
+        "arch": "riscv64-freethreaded",
+        "platform": "linux",
+        "platform_version": "24.04",
+        "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.14.0-beta.2-24014027999/python-3.14.0-beta.2-linux-24.04-riscv64-freethreaded.tar.gz"
+      },
+      {
+        "filename": "python-3.14.0-beta.2-linux-24.04-riscv64.tar.gz",
+        "arch": "riscv64",
+        "platform": "linux",
+        "platform_version": "24.04",
+        "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.14.0-beta.2-24014027999/python-3.14.0-beta.2-linux-24.04-riscv64.tar.gz"
+      }
+    ]
+  },
+  {
     "version": "3.14.0-beta.1",
     "stable": false,
     "release_url": "https://github.com/riseproject-dev/python-versions/releases/tag/3.14.0-beta.1-24014027978",
