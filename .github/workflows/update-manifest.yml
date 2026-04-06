@@ -14,7 +14,7 @@ defaults:
     shell: bash --noprofile --norc -euxo pipefail {0}
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}
   cancel-in-progress: false
 
 jobs:
@@ -41,20 +41,11 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
 
-      - name: Switch to PR branch
+      - name: Regenerate manifest and push
         run: |
-          if git ls-remote --exit-code --heads origin "$PR_BRANCH" >/dev/null; then
-            git fetch origin "$PR_BRANCH"
-            git switch -c "$PR_BRANCH" "origin/$PR_BRANCH"
-          else
-            git switch -C "$PR_BRANCH"
-          fi
+          git switch -C "$PR_BRANCH"
+          python .github/scripts/update-manifest.py
 
-      - name: Regenerate manifest
-        run: python .github/scripts/update-manifest.py
-
-      - name: Commit and push (if changed)
-        run: |
           if git diff --quiet -- versions-manifest.json; then
             echo "No manifest changes"
             exit 0
@@ -62,10 +53,10 @@ jobs:
 
           git add versions-manifest.json
           git commit -m "Update versions-manifest.json"
-          git push origin "$PR_BRANCH"
+          git push --force origin "$PR_BRANCH"
 
           if gh pr list --repo "$GITHUB_REPOSITORY" --head "$PR_BRANCH" --state open --json number -q '.[].number' | grep -q .; then
-            echo "Existing PR updated"
+            echo "Existing PR updated via force-push"
           else
             gh pr create --repo "$GITHUB_REPOSITORY" \
               --base main \
