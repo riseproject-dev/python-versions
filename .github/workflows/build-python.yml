@@ -7,11 +7,6 @@ on:
         description: "CPython git tag to build (e.g. v3.12.13, v3.15.0a7)"
         required: true
         type: string
-      freethreaded:
-        description: "Also build a --disable-gil variant (3.13+)"
-        required: false
-        default: false
-        type: boolean
 
 permissions:
   contents: write
@@ -81,9 +76,8 @@ jobs:
           echo "archive_base=python-${normalised}-linux-24.04-riscv64" >> "$GITHUB_OUTPUT"
           echo "Normalised version: ${normalised}"
           echo "Python X.Y: ${minor}"
-          if [ "${{ inputs.freethreaded }}" = "true" ] && [ "${minor_num}" -lt 13 ]; then
-            echo "ERROR: freethreaded build requires CPython 3.13+" >&2
-            exit 1
+          if [ "${minor_num}" -ge 13 ]; then
+            echo "freethreaded=true" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Checkout CPython
@@ -122,7 +116,7 @@ jobs:
           rm -rf "${{ steps.vars.outputs.archive_base }}" staging-std
 
       - name: Build free-threaded CPython
-        if: ${{ inputs.freethreaded == true }}
+        if: ${{ steps.vars.outputs.freethreaded }}
         run: |
           pushd src
           git clean -fdx
