@@ -132,7 +132,7 @@ jobs:
           cp -a staging-ft/usr/local/lib "${{ steps.vars.outputs.archive_base }}-freethreaded/"
           cp -a staging-ft/usr/local/share "${{ steps.vars.outputs.archive_base }}-freethreaded/"
 
-          patchelf --set-rpath '/opt/hostedtoolcache/Python/${{ steps.vars.outputs.normalised }}/riscv64-freethreaded/lib' "${{ steps.vars.outputs.archive_base }}/bin/python${{ steps.vars.outputs.minor }}"
+          patchelf --set-rpath '/opt/hostedtoolcache/Python/${{ steps.vars.outputs.normalised }}/riscv64-freethreaded/lib' "${{ steps.vars.outputs.archive_base }}-freethreaded/bin/python${{ steps.vars.outputs.minor }}"
           ln -srf "${{ steps.vars.outputs.archive_base }}-freethreaded/bin/python${{ steps.vars.outputs.minor }}" "${{ steps.vars.outputs.archive_base }}-freethreaded/bin/python"
           ln -srf "${{ steps.vars.outputs.archive_base }}-freethreaded/bin/pip${{ steps.vars.outputs.minor }}" "${{ steps.vars.outputs.archive_base }}-freethreaded/bin/pip"
 
