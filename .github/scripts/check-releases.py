@@ -127,13 +127,12 @@ def version_sort_key(cpython_tag: str) -> tuple[int, int, int, int, int]:
     return (3, minor, patch, stage_order, stage_num)
 
 
-def dispatch_workflow(repo: str, token: str, cpython_tag: str, ft: bool) -> None:
+def dispatch_workflow(repo: str, token: str, cpython_tag: str) -> None:
     body = json.dumps(
         {
             "ref": "main",
             "inputs": {
                 "cpython_tag": cpython_tag,
-                "freethreaded": "true" if ft else "false",
             },
         }
     ).encode("utf-8")
@@ -176,10 +175,10 @@ def wait_run_complete(repo: str, token: str, run_id: int) -> str | None:
             return data.get("conclusion")
 
 
-def run_build(repo: str, token: str, tag: str, ft: bool, baseline: set[int]) -> tuple[str, str | None]:
-    log(f"[{tag}] dispatching build-python.yml (freethreaded={str(ft).lower()})")
+def run_build(repo: str, token: str, tag: str, baseline: set[int]) -> tuple[str, str | None]:
+    log(f"[{tag}] dispatching build-python.yml")
     after_ts = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-    dispatch_workflow(repo, token, tag, ft)
+    dispatch_workflow(repo, token, tag)
     run = find_dispatched_run(repo, token, baseline, after_ts)
     if run is None:
         log(f"[{tag}] WARN: could not locate dispatched run within timeout")
@@ -228,7 +227,7 @@ def main() -> int:
     existing_tags = {r.get("tag_name") or "" for r in releases}
 
     # Decide what to dispatch
-    to_dispatch: list[tuple[str, bool]] = []
+    to_dispatch: list[str] = []
     for tag in candidates:
         match = CPYTHON_TAG_RE.match(tag)
         assert match is not None
@@ -249,14 +248,13 @@ def main() -> int:
             log("  in denylist, skipping")
             continue
 
-        ft = minor >= 13
-        log(f"  queued for dispatch (freethreaded={str(ft).lower()})")
-        to_dispatch.append((tag, ft))
+        log(f"  queued for dispatch")
+        to_dispatch.append(tag)
 
     log("")
     log(f"=== {len(to_dispatch)} candidate(s) to build ===")
-    for tag, ft in to_dispatch:
-        log(f"  {tag} (ft={str(ft).lower()})")
+    for tag in to_dispatch:
+        log(f"  {tag}")
 
     if dry_run:
         log("")
@@ -277,8 +275,8 @@ def main() -> int:
     failures: list[str] = []
     with cf.ThreadPoolExecutor(max_workers=max_parallelism) as pool:
         futures = [
-            pool.submit(run_build, repo, token, tag, ft, baseline)
-            for tag, ft in to_dispatch
+            pool.submit(run_build, repo, token, tag, baseline)
+            for tag in to_dispatch
         ]
         for fut in cf.as_completed(futures):
             try:
