@@ -35,8 +35,8 @@ jobs:
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_REPOSITORY: ${{ github.repository }}
-      MAX_PARALLELISM: ${{ inputs.max_parallelism || '10' }}
-      DRY_RUN: ${{ inputs.dry_run && 'true' || 'false' }}
+      MAX_PARALLELISM: ${{ inputs.max-parallelism || '10' }}
+      DRY_RUN: ${{ inputs.dry-run && 'true' || 'false' }}
       FORCE_REBUILD: ${{ inputs.force-rebuild && 'true' || 'false' }}
     steps:
       - name: Checkout repo
