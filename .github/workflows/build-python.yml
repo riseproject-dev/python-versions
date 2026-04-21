@@ -18,6 +18,7 @@ defaults:
 
 jobs:
   build:
+    name: Build Python ${{ inputs.cpython_tag }}
     runs-on: ubuntu-24.04-riscv
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
