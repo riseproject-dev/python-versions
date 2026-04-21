@@ -209,6 +209,7 @@ def main() -> int:
         print("MAX_PARALLELISM must be >= 1", file=sys.stderr)
         return 1
     dry_run = parse_bool(os.environ.get("DRY_RUN"))
+    force_rebuild = parse_bool(os.environ.get("FORCE_REBUILD", "false"))
 
     # Fetch all v* tags from python/cpython
     refs = gh_get_paginated("/repos/python/cpython/git/matching-refs/tags/v", token)
@@ -237,8 +238,12 @@ def main() -> int:
 
         version_re = re.compile(rf"^{re.escape(normalised)}-[0-9]+$")
         if any(version_re.match(t) for t in existing_tags):
-            log("  already released, skipping")
-            continue
+            if force_rebuild:
+                log("  already released, force rebuilding anyway")
+                # fall through
+            else:
+                log("  already released, skipping")
+                continue
 
         if tag in DENYLIST:
             log("  in denylist, skipping")

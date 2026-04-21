@@ -5,13 +5,18 @@ on:
     - cron: '0 6 * * *'
   workflow_dispatch:
     inputs:
-      max_parallelism:
+      max-parallelism:
         description: "Maximum number of build-python.yml runs in flight at once"
         required: false
         default: "10"
         type: string
-      dry_run:
+      dry-run:
         description: "List candidates without dispatching any builds"
+        required: false
+        default: false
+        type: boolean
+      force-rebuild:
+        description: "Force the build of the specified versions, overwriting them if they already exist"
         required: false
         default: false
         type: boolean
@@ -32,6 +37,7 @@ jobs:
       GITHUB_REPOSITORY: ${{ github.repository }}
       MAX_PARALLELISM: ${{ inputs.max_parallelism || '10' }}
       DRY_RUN: ${{ inputs.dry_run && 'true' || 'false' }}
+      FORCE_REBUILD: ${{ inputs.force-rebuild && 'true' || 'false' }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
