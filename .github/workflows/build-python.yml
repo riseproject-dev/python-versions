@@ -95,7 +95,7 @@ jobs:
         run: |
           mkdir -p output
           pushd src
-          ./configure --with-ensurepip=install --enable-shared
+          ./configure --prefix=/opt/hostedtoolcache/Python/${NORMALISED}/riscv64 --with-ensurepip=install --enable-shared
           make -j"$(nproc)" 2>&1 | tee ../build_output.txt
           make install DESTDIR="$PWD/../staging-std"
           popd
@@ -106,7 +106,8 @@ jobs:
           cp -a staging-std/usr/local/lib "$ARCHIVE_BASE/"
           cp -a staging-std/usr/local/share "$ARCHIVE_BASE/"
 
-          patchelf --set-rpath '$ORIGIN/../lib' "$ARCHIVE_BASE/bin/python${MINOR}"
+          ln -srf "$ARCHIVE_BASE/bin/python${MINOR}" "$ARCHIVE_BASE/bin/python"
+          ln -srf "$ARCHIVE_BASE/bin/pip${MINOR}" "$ARCHIVE_BASE/bin/pip"
 
           sed -e "s|{{__VERSION_FULL__}}|${NORMALISED}|g" \
               -e "s|{{__ARCH__}}|riscv64|g" \
@@ -130,7 +131,7 @@ jobs:
         run: |
           pushd src
           git clean -fdx
-          ./configure --with-ensurepip=install --enable-shared --disable-gil
+          ./configure --prefix=/opt/hostedtoolcache/Python/${NORMALISED}/riscv64-freethreaded --with-ensurepip=install --enable-shared --disable-gil
           make -j"$(nproc)" 2>&1 | tee ../build_output.txt
           make install DESTDIR="$PWD/../staging-ft"
           popd
@@ -141,7 +142,8 @@ jobs:
           cp -a staging-ft/usr/local/lib "$ARCHIVE_BASE/"
           cp -a staging-ft/usr/local/share "$ARCHIVE_BASE/"
 
-          patchelf --set-rpath '$ORIGIN/../lib' "$ARCHIVE_BASE/bin/python${MINOR}"
+          ln -srf "$ARCHIVE_BASE/bin/python${MINOR}" "$ARCHIVE_BASE/bin/python"
+          ln -srf "$ARCHIVE_BASE/bin/pip${MINOR}" "$ARCHIVE_BASE/bin/pip"
 
           sed -e "s|{{__VERSION_FULL__}}|${NORMALISED}|g" \
               -e "s|{{__ARCH__}}|riscv64-freethreaded|g" \
