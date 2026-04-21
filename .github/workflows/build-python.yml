@@ -93,7 +93,7 @@ jobs:
         run: |
           mkdir -p output
           pushd src
-          ./configure --prefix=/opt/hostedtoolcache/Python/${{ steps.vars.outputs.normalised }}/riscv64 --with-ensurepip=install --enable-shared
+          ./configure --with-ensurepip=install --enable-shared
           make -j"$(nproc)" 2>&1 | tee ../build_output.txt
           make install DESTDIR="$PWD/../staging-std"
           popd
@@ -104,6 +104,7 @@ jobs:
           cp -a staging-std/usr/local/lib "${{ steps.vars.outputs.archive_base }}/"
           cp -a staging-std/usr/local/share "${{ steps.vars.outputs.archive_base }}/"
 
+          patchelf --set-rpath '/opt/hostedtoolcache/Python/${{ steps.vars.outputs.normalised }}/riscv64/lib' "${{ steps.vars.outputs.archive_base }}/bin/python${{ steps.vars.outputs.minor }}"
           ln -srf "${{ steps.vars.outputs.archive_base }}/bin/python${{ steps.vars.outputs.minor }}" "${{ steps.vars.outputs.archive_base }}/bin/python"
           ln -srf "${{ steps.vars.outputs.archive_base }}/bin/pip${{ steps.vars.outputs.minor }}" "${{ steps.vars.outputs.archive_base }}/bin/pip"
 
@@ -125,7 +126,7 @@ jobs:
         run: |
           pushd src
           git clean -fdx
-          ./configure --prefix=/opt/hostedtoolcache/Python/${{ steps.vars.outputs.normalised }}/riscv64-freethreaded --with-ensurepip=install --enable-shared --disable-gil
+          ./configure --with-ensurepip=install --enable-shared --disable-gil
           make -j"$(nproc)" 2>&1 | tee ../build_output.txt
           make install DESTDIR="$PWD/../staging-ft"
           popd
@@ -136,6 +137,7 @@ jobs:
           cp -a staging-ft/usr/local/lib "${{ steps.vars.outputs.archive_base }}-freethreaded/"
           cp -a staging-ft/usr/local/share "${{ steps.vars.outputs.archive_base }}-freethreaded/"
 
+          patchelf --set-rpath '/opt/hostedtoolcache/Python/${{ steps.vars.outputs.normalised }}/riscv64-freethreaded/lib' "${{ steps.vars.outputs.archive_base }}/bin/python${{ steps.vars.outputs.minor }}"
           ln -srf "${{ steps.vars.outputs.archive_base }}-freethreaded/bin/python${{ steps.vars.outputs.minor }}" "${{ steps.vars.outputs.archive_base }}-freethreaded/bin/python"
           ln -srf "${{ steps.vars.outputs.archive_base }}-freethreaded/bin/pip${{ steps.vars.outputs.minor }}" "${{ steps.vars.outputs.archive_base }}-freethreaded/bin/pip"
 
