@@ -1,5 +1,26 @@
 [
   {
+    "version": "3.15.0-beta.2",
+    "stable": false,
+    "release_url": "https://github.com/riseproject-dev/python-versions/releases/tag/3.15.0-beta.2-26880460805",
+    "files": [
+      {
+        "filename": "python-3.15.0-beta.2-linux-24.04-riscv64-freethreaded.tar.gz",
+        "arch": "riscv64-freethreaded",
+        "platform": "linux",
+        "platform_version": "24.04",
+        "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.15.0-beta.2-26880460805/python-3.15.0-beta.2-linux-24.04-riscv64-freethreaded.tar.gz"
+      },
+      {
+        "filename": "python-3.15.0-beta.2-linux-24.04-riscv64.tar.gz",
+        "arch": "riscv64",
+        "platform": "linux",
+        "platform_version": "24.04",
+        "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.15.0-beta.2-26880460805/python-3.15.0-beta.2-linux-24.04-riscv64.tar.gz"
+      }
+    ]
+  },
+  {
     "version": "3.15.0-beta.1",
     "stable": false,
     "release_url": "https://github.com/riseproject-dev/python-versions/releases/tag/3.15.0-beta.1-25543651773",
