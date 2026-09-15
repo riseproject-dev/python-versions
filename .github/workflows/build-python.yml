@@ -45,7 +45,6 @@ jobs:
             libsqlite3-dev \
             libssl-dev \
             make \
-            patchelf \
             pkg-config \
             tk-dev \
             uuid-dev \
@@ -86,20 +85,20 @@ jobs:
 
       - name: Build standard CPython
         run: |
+          # Prefix must match the final toolcache path: ensurepip shebangs, python-config,
+          # pkgconfig and _sysconfigdata all embed it, and DESTDIR does not relocate them.
+          prefix="/opt/hostedtoolcache/Python/${{ steps.vars.outputs.normalised }}/riscv64"
+
           mkdir -p output
           pushd src
-          ./configure --with-ensurepip=install --enable-shared
+          LDFLAGS="-Wl,-rpath=${prefix}/lib" ./configure --prefix="${prefix}" --with-ensurepip=install --enable-shared
           make -j"$(nproc)" 2>&1 | tee ../build_output.txt
           make install DESTDIR="$PWD/../staging-std"
           popd
 
           mkdir -p "${{ steps.vars.outputs.archive_base }}"
-          cp -a staging-std/usr/local/bin "${{ steps.vars.outputs.archive_base }}/"
-          cp -a staging-std/usr/local/include "${{ steps.vars.outputs.archive_base }}/"
-          cp -a staging-std/usr/local/lib "${{ steps.vars.outputs.archive_base }}/"
-          cp -a staging-std/usr/local/share "${{ steps.vars.outputs.archive_base }}/"
-
-          patchelf --set-rpath '/opt/hostedtoolcache/Python/${{ steps.vars.outputs.normalised }}/riscv64/lib' "${{ steps.vars.outputs.archive_base }}/bin/python${{ steps.vars.outputs.minor }}"
+          cp -a "staging-std${prefix}/." "${{ steps.vars.outputs.archive_base }}/"
+          grep -qx "#!${prefix}/bin/python${{ steps.vars.outputs.minor }}" "${{ steps.vars.outputs.archive_base }}/bin/pip${{ steps.vars.outputs.minor }}"
           ln -srf "${{ steps.vars.outputs.archive_base }}/bin/python${{ steps.vars.outputs.minor }}" "${{ steps.vars.outputs.archive_base }}/bin/python"
           ln -srf "${{ steps.vars.outputs.archive_base }}/bin/pip${{ steps.vars.outputs.minor }}" "${{ steps.vars.outputs.archive_base }}/bin/pip"
 
@@ -119,20 +118,18 @@ jobs:
       - name: Build free-threaded CPython
         if: ${{ steps.vars.outputs.freethreaded }}
         run: |
+          prefix="/opt/hostedtoolcache/Python/${{ steps.vars.outputs.normalised }}/riscv64-freethreaded"
+
           pushd src
           git clean -fdx
-          ./configure --with-ensurepip=install --enable-shared --disable-gil
+          LDFLAGS="-Wl,-rpath=${prefix}/lib" ./configure --prefix="${prefix}" --with-ensurepip=install --enable-shared --disable-gil
           make -j"$(nproc)" 2>&1 | tee ../build_output.txt
           make install DESTDIR="$PWD/../staging-ft"
           popd
 
           mkdir -p "${{ steps.vars.outputs.archive_base }}-freethreaded"
-          cp -a staging-ft/usr/local/bin "${{ steps.vars.outputs.archive_base }}-freethreaded/"
-          cp -a staging-ft/usr/local/include "${{ steps.vars.outputs.archive_base }}-freethreaded/"
-          cp -a staging-ft/usr/local/lib "${{ steps.vars.outputs.archive_base }}-freethreaded/"
-          cp -a staging-ft/usr/local/share "${{ steps.vars.outputs.archive_base }}-freethreaded/"
-
-          patchelf --set-rpath '/opt/hostedtoolcache/Python/${{ steps.vars.outputs.normalised }}/riscv64-freethreaded/lib' "${{ steps.vars.outputs.archive_base }}-freethreaded/bin/python${{ steps.vars.outputs.minor }}"
+          cp -a "staging-ft${prefix}/." "${{ steps.vars.outputs.archive_base }}-freethreaded/"
+          grep -qx "#!${prefix}/bin/python${{ steps.vars.outputs.minor }}" "${{ steps.vars.outputs.archive_base }}-freethreaded/bin/pip${{ steps.vars.outputs.minor }}"
           ln -srf "${{ steps.vars.outputs.archive_base }}-freethreaded/bin/python${{ steps.vars.outputs.minor }}" "${{ steps.vars.outputs.archive_base }}-freethreaded/bin/python"
           ln -srf "${{ steps.vars.outputs.archive_base }}-freethreaded/bin/pip${{ steps.vars.outputs.minor }}" "${{ steps.vars.outputs.archive_base }}-freethreaded/bin/pip"
 
