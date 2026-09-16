@@ -89,18 +89,19 @@ jobs:
       - name: Build standard CPython
         run: |
           # Prefix must match the final toolcache path: ensurepip shebangs, python-config,
-          # pkgconfig and _sysconfigdata all embed it, and DESTDIR does not relocate them.
+          # pkgconfig and _sysconfigdata all embed it. Install straight into it:
+          # pip's distlib only emits the versioned python3.X shebang if that file exists.
           prefix="/opt/hostedtoolcache/Python/${{ steps.vars.outputs.normalised }}/riscv64"
 
           mkdir -p output
           pushd src
           LDFLAGS="-Wl,-rpath=${prefix}/lib" ./configure --prefix="${prefix}" --with-ensurepip=install --enable-shared
           make -j"$(nproc)" 2>&1 | tee ../build_output.txt
-          make install DESTDIR="$PWD/../staging-std"
+          make install
           popd
 
           mkdir -p "${{ steps.vars.outputs.archive_base }}"
-          cp -a "staging-std${prefix}/." "${{ steps.vars.outputs.archive_base }}/"
+          cp -a "${prefix}/." "${{ steps.vars.outputs.archive_base }}/"
           grep -qx "#!${prefix}/bin/python${{ steps.vars.outputs.minor }}" "${{ steps.vars.outputs.archive_base }}/bin/pip${{ steps.vars.outputs.minor }}"
           ln -srf "${{ steps.vars.outputs.archive_base }}/bin/python${{ steps.vars.outputs.minor }}" "${{ steps.vars.outputs.archive_base }}/bin/python"
           ln -srf "${{ steps.vars.outputs.archive_base }}/bin/pip${{ steps.vars.outputs.minor }}" "${{ steps.vars.outputs.archive_base }}/bin/pip"
@@ -116,7 +117,7 @@ jobs:
           (cd "${{ steps.vars.outputs.archive_base }}" && find . \( -type f -o -type l \) | sed 's|^\./|/|') > "${{ steps.vars.outputs.archive_base }}/tools_structure.txt"
 
           tar -czf "output/${{ steps.vars.outputs.archive_base }}.tar.gz" -C "${{ steps.vars.outputs.archive_base }}" .
-          rm -rf "${{ steps.vars.outputs.archive_base }}" staging-std
+          rm -rf "${{ steps.vars.outputs.archive_base }}" "${prefix}"
 
       - name: Build free-threaded CPython
         if: ${{ steps.vars.outputs.freethreaded }}
@@ -127,11 +128,11 @@ jobs:
           git clean -fdx
           LDFLAGS="-Wl,-rpath=${prefix}/lib" ./configure --prefix="${prefix}" --with-ensurepip=install --enable-shared --disable-gil
           make -j"$(nproc)" 2>&1 | tee ../build_output.txt
-          make install DESTDIR="$PWD/../staging-ft"
+          make install
           popd
 
           mkdir -p "${{ steps.vars.outputs.archive_base }}-freethreaded"
-          cp -a "staging-ft${prefix}/." "${{ steps.vars.outputs.archive_base }}-freethreaded/"
+          cp -a "${prefix}/." "${{ steps.vars.outputs.archive_base }}-freethreaded/"
           grep -qx "#!${prefix}/bin/python${{ steps.vars.outputs.minor }}" "${{ steps.vars.outputs.archive_base }}-freethreaded/bin/pip${{ steps.vars.outputs.minor }}"
           ln -srf "${{ steps.vars.outputs.archive_base }}-freethreaded/bin/python${{ steps.vars.outputs.minor }}" "${{ steps.vars.outputs.archive_base }}-freethreaded/bin/python"
           ln -srf "${{ steps.vars.outputs.archive_base }}-freethreaded/bin/pip${{ steps.vars.outputs.minor }}" "${{ steps.vars.outputs.archive_base }}-freethreaded/bin/pip"
@@ -147,7 +148,7 @@ jobs:
           (cd "${{ steps.vars.outputs.archive_base }}-freethreaded" && find . \( -type f -o -type l \) | sed 's|^\./|/|') > "${{ steps.vars.outputs.archive_base }}-freethreaded/tools_structure.txt"
 
           tar -czf "output/${{ steps.vars.outputs.archive_base }}-freethreaded.tar.gz" -C "${{ steps.vars.outputs.archive_base }}-freethreaded" .
-          rm -rf "${{ steps.vars.outputs.archive_base }}-freethreaded" staging-ft
+          rm -rf "${{ steps.vars.outputs.archive_base }}-freethreaded" "${prefix}"
 
       - name: Print tarball hashes
         run: sha256sum output/*.tar.gz
