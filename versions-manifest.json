@@ -294,6 +294,27 @@
     ]
   },
   {
+    "version": "3.14.8",
+    "stable": true,
+    "release_url": "https://github.com/riseproject-dev/python-versions/releases/tag/3.14.8-36862634993",
+    "files": [
+      {
+        "filename": "python-3.14.8-linux-24.04-riscv64-freethreaded.tar.gz",
+        "arch": "riscv64-freethreaded",
+        "platform": "linux",
+        "platform_version": "24.04",
+        "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.14.8-36862634993/python-3.14.8-linux-24.04-riscv64-freethreaded.tar.gz"
+      },
+      {
+        "filename": "python-3.14.8-linux-24.04-riscv64.tar.gz",
+        "arch": "riscv64",
+        "platform": "linux",
+        "platform_version": "24.04",
+        "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.14.8-36862634993/python-3.14.8-linux-24.04-riscv64.tar.gz"
+      }
+    ]
+  },
+  {
     "version": "3.14.7",
     "stable": true,
     "release_url": "https://github.com/riseproject-dev/python-versions/releases/tag/3.14.7-35090426206",
@@ -773,6 +794,27 @@
         "platform": "linux",
         "platform_version": "24.04",
         "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.14.0-alpha.1-35096351828/python-3.14.0-alpha.1-linux-24.04-riscv64.tar.gz"
+      }
+    ]
+  },
+  {
+    "version": "3.13.16",
+    "stable": true,
+    "release_url": "https://github.com/riseproject-dev/python-versions/releases/tag/3.13.16-36862635274",
+    "files": [
+      {
+        "filename": "python-3.13.16-linux-24.04-riscv64-freethreaded.tar.gz",
+        "arch": "riscv64-freethreaded",
+        "platform": "linux",
+        "platform_version": "24.04",
+        "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.13.16-36862635274/python-3.13.16-linux-24.04-riscv64-freethreaded.tar.gz"
+      },
+      {
+        "filename": "python-3.13.16-linux-24.04-riscv64.tar.gz",
+        "arch": "riscv64",
+        "platform": "linux",
+        "platform_version": "24.04",
+        "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.13.16-36862635274/python-3.13.16-linux-24.04-riscv64.tar.gz"
       }
     ]
   },
@@ -1344,6 +1386,20 @@
     ]
   },
   {
+    "version": "3.12.15",
+    "stable": true,
+    "release_url": "https://github.com/riseproject-dev/python-versions/releases/tag/3.12.15-36862635420",
+    "files": [
+      {
+        "filename": "python-3.12.15-linux-24.04-riscv64.tar.gz",
+        "arch": "riscv64",
+        "platform": "linux",
+        "platform_version": "24.04",
+        "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.12.15-36862635420/python-3.12.15-linux-24.04-riscv64.tar.gz"
+      }
+    ]
+  },
+  {
     "version": "3.12.14",
     "stable": true,
     "release_url": "https://github.com/riseproject-dev/python-versions/releases/tag/3.12.14-35112565297",
@@ -1746,6 +1802,20 @@
         "platform": "linux",
         "platform_version": "24.04",
         "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.12.0-alpha.1-35116917100/python-3.12.0-alpha.1-linux-24.04-riscv64.tar.gz"
+      }
+    ]
+  },
+  {
+    "version": "3.11.17",
+    "stable": true,
+    "release_url": "https://github.com/riseproject-dev/python-versions/releases/tag/3.11.17-36862635264",
+    "files": [
+      {
+        "filename": "python-3.11.17-linux-24.04-riscv64.tar.gz",
+        "arch": "riscv64",
+        "platform": "linux",
+        "platform_version": "24.04",
+        "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.11.17-36862635264/python-3.11.17-linux-24.04-riscv64.tar.gz"
       }
     ]
   },
@@ -2180,6 +2250,20 @@
         "platform": "linux",
         "platform_version": "24.04",
         "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.11.0-alpha.1-35119680712/python-3.11.0-alpha.1-linux-24.04-riscv64.tar.gz"
+      }
+    ]
+  },
+  {
+    "version": "3.10.22",
+    "stable": true,
+    "release_url": "https://github.com/riseproject-dev/python-versions/releases/tag/3.10.22-36862634982",
+    "files": [
+      {
+        "filename": "python-3.10.22-linux-24.04-riscv64.tar.gz",
+        "arch": "riscv64",
+        "platform": "linux",
+        "platform_version": "24.04",
+        "download_url": "https://github.com/riseproject-dev/python-versions/releases/download/3.10.22-36862634982/python-3.10.22-linux-24.04-riscv64.tar.gz"
       }
     ]
   },
